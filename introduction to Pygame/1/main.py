@@ -1,6 +1,7 @@
 import pygame
 import sys
 from settings import *
+from functions import *
 
 # Initialize
 pygame.init()
@@ -26,8 +27,7 @@ while True:
     # Check for quit input
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            quit_game()
 
     # Position the surfaces on the display surface
     screen.blit(sky_surface, (0, 0))
@@ -44,7 +44,7 @@ while True:
 
     # Check for collision
     if player_rectangle.colliderect(snail_rectangle):
-
+        quit_game()
 
     # Update everything
     pygame.display.update()
