@@ -7,5 +7,5 @@ CAPTION = "Runner"
 FRAME_RATE = 60
 
 # Snail position
-SNAIL_X_POS = 700
-
+SNAIL_POSITION = (700, 265)
+SNAIL_SPEED = 4
