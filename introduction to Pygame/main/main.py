@@ -15,7 +15,7 @@ sky_surface = pygame.image.load("../graphics/Sky.png").convert()
 ground_surface = pygame.image.load("../graphics/ground.png").convert()
 
 # Create score surface and rectangle
-score_surface = text_font.render('My game', True, 'Black')
+score_surface = text_font.render('My game', True, (64, 64, 64))
 score_rect = score_surface.get_rect(center=(400, 50))
 
 # Create snail surface and rectangle
@@ -40,7 +40,7 @@ while True:
     screen.blit(sky_surface, (0, 0))
     screen.blit(ground_surface, (0, 300))
 
-    pygame.draw.rect(screen, 'Pink', score_rect)
+    pygame.draw.rect(screen, '#c0e8ec', score_rect)
     screen.blit(score_surface, score_rect)
 
     screen.blit(player_surface, player_rectangle)
