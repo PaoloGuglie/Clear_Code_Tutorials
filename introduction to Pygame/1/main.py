@@ -1,6 +1,5 @@
-# Imports
+# Import statements
 import pygame
-import sys
 from settings import *
 from functions import *
 
