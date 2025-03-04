@@ -15,7 +15,7 @@ sky_surface = pygame.image.load("../graphics/Sky.png").convert()
 ground_surface = pygame.image.load("../graphics/ground.png").convert()
 
 # Create score surface and rectangle
-score_surface = text_font.render('My game', True, (64, 64, 64))
+score_surface = text_font.render(f'Score: {SCORE}', True, (64, 64, 64))
 score_rect = score_surface.get_rect(center=(400, 50))
 
 # Create snail surface and rectangle
@@ -31,12 +31,19 @@ while True:
 
     # Check for inputs
     for event in pygame.event.get():
+        # Quit
         if event.type == pygame.QUIT:
             quit_game()
+        # Mouse click
         if event.type == pygame.MOUSEBUTTONDOWN:
             print(event.pos)
+        # Jump
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                if player_rectangle.y == 215:
+                    PLAYER_GRAVITY = -20
 
-    # Position the surfaces on the display surface
+    # Position the items on the display surface
     screen.blit(sky_surface, (0, 0))
     screen.blit(ground_surface, (0, 300))
 
@@ -46,15 +53,24 @@ while True:
     screen.blit(player_surface, player_rectangle)
     screen.blit(snail_surface, snail_rectangle)
 
+    # Move the player
+    if PLAYER_GRAVITY < 0 or player_rectangle.y != 215:
+        PLAYER_GRAVITY += 1
+        player_rectangle.y += PLAYER_GRAVITY
+
     # Move the snail
     snail_rectangle.x -= SNAIL_SPEED
-    # Check for out of bounds
+    # Check if the snail reached end of screen
     if snail_rectangle.right <= 0:
+        # Move snail back to start
         snail_rectangle.left = 800
+        # Update score
+        SCORE += 1
+        score_surface = text_font.render(f'Score: {SCORE}', True, (64, 64, 64))
 
     # Check for collision
     if player_rectangle.colliderect(snail_rectangle):
-        print("Snail collision! Game aborted")
+        print(f"Snail collision! Score: {SCORE}")
         quit_game()
 
     # Check for mouse collision with the player

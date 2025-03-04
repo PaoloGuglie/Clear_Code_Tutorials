@@ -8,4 +8,11 @@ FRAME_RATE = 60
 
 # Snail position
 SNAIL_POSITION = (700, 265)
-SNAIL_SPEED = 4
+SNAIL_SPEED = 8
+
+# Physics
+PLAYER_GRAVITY = 0
+
+# Gameplay
+SCORE = 0
+
