@@ -9,6 +9,8 @@ SCORE = 0
 
 # Clock
 FRAME_RATE = 60
+START_TIME = 0
+FINAL_TIME = 0
 
 # Snail position
 SNAIL_POSITION = (700, 265)

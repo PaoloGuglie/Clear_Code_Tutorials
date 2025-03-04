@@ -1,7 +1,33 @@
 # Import statements
 import pygame
+import sys
 from settings import *
-from functions import *
+
+
+# Functions
+def quit_game():
+    pygame.quit()
+    sys.exit()
+
+
+def display_score():
+    score_surface = text_font.render(f'Score: {SCORE}', True, 'Black')
+    score_rect = score_surface.get_rect(center=(350, 50))
+    screen.blit(score_surface, score_rect)
+
+
+def display_time():
+    current_time = int(pygame.time.get_ticks() / 1000 - START_TIME)
+    time_surface = text_font.render(f'Time: {current_time}', True, 'Black')
+    time_rect = time_surface.get_rect(center=(600, 50))
+    screen.blit(time_surface, time_rect)
+
+
+def display_final_time():
+    time_surface = text_font.render(f'Time: {FINAL_TIME - START_TIME}', True, 'Black')
+    time_rect = time_surface.get_rect(center=(600, 50))
+    screen.blit(time_surface, time_rect)
+
 
 # Initialize
 pygame.init()
@@ -14,10 +40,6 @@ text_font = pygame.font.Font('../font/Pixeltype.ttf', 70)
 sky_surface = pygame.image.load("../graphics/Sky.png").convert()
 ground_surface = pygame.image.load("../graphics/ground.png").convert()
 
-# Create score surface and rectangle
-score_surface = text_font.render(f'Score: {SCORE}', True, (64, 64, 64))
-score_rect = score_surface.get_rect(center=(400, 50))
-
 # Create snail surface and rectangle
 snail_surface = pygame.image.load('../graphics/snail/snail1.png').convert_alpha()
 snail_rectangle = snail_surface.get_rect(topleft=SNAIL_POSITION)
@@ -29,19 +51,19 @@ player_rectangle = player_surface.get_rect(topleft=(80, 215))
 # Main loop
 while True:
 
-    # Check for inputs
+    # INPUTS
     for event in pygame.event.get():
         # Quit
         if event.type == pygame.QUIT:
             quit_game()
-        # During Gameplay
+
         if GAME_ACTIVE:
             # Jump
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     if player_rectangle.y == 215:
                         PLAYER_GRAVITY = -20
-        # During game over screen
+
         else:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
@@ -49,9 +71,9 @@ while True:
                     GAME_ACTIVE = True
                     # Reposition the snail
                     snail_rectangle.left = 800
-                    # Reset score
+                    # Reset score and time
                     SCORE = 0
-                    score_surface = text_font.render(f'Score: {SCORE}', True, (64, 64, 64))
+                    START_TIME = int(pygame.time.get_ticks() / 1000)
                 elif event.key == pygame.K_q:
                     quit_game()
 
@@ -60,13 +82,14 @@ while True:
         screen.blit(sky_surface, (0, 0))
         screen.blit(ground_surface, (0, 300))
 
-        pygame.draw.rect(screen, '#c0e8ec', score_rect)
-        screen.blit(score_surface, score_rect)
-
         screen.blit(player_surface, player_rectangle)
         screen.blit(snail_surface, snail_rectangle)
 
-        # Move the player in the air
+        # Display score and time
+        display_score()
+        display_time()
+
+        # Jump behaviour
         if PLAYER_GRAVITY < 0 or player_rectangle.y != 215:
             PLAYER_GRAVITY += 1
             player_rectangle.y += PLAYER_GRAVITY
@@ -77,30 +100,34 @@ while True:
         if snail_rectangle.right <= 0:
             # Move snail back to start
             snail_rectangle.left = 800
-            # Update score
+            # Update score and text
             SCORE += 1
-            score_surface = text_font.render(f'Score: {SCORE}', True, (64, 64, 64))
+            display_score()
 
         # Check for player-snail collision
         if player_rectangle.colliderect(snail_rectangle):
+            # Game over
             GAME_ACTIVE = False
+            # Get current time
+            FINAL_TIME = int(pygame.time.get_ticks() / 1000)
 
     else:
         # Game over screen
         screen.fill('Yellow')
 
-        final_score_surface = text_font.render(f"Score: {SCORE}", True, 'Black')
-        final_score_rect = final_score_surface.get_rect(center=(400, 100))
+        # Display elements
+        display_score()
+        display_final_time()
 
+        # Replay message
         replay_msg_surface = text_font.render("Press Enter to replay", True, 'Black')
         replay_msg_rect = replay_msg_surface.get_rect(center=(400, 200))
-
-        quit_msg_surface = text_font.render("Press 'q' to quit", True, 'Black')
-        quit_msg_text = quit_msg_surface.get_rect(center=(400, 300))
-
-        screen.blit(final_score_surface, final_score_rect)
         screen.blit(replay_msg_surface, replay_msg_rect)
-        screen.blit(quit_msg_surface, quit_msg_text)
+
+        # Quit message
+        quit_msg_surface = text_font.render("Press 'q' to quit", True, 'Black')
+        quit_msg_rect = quit_msg_surface.get_rect(center=(400, 300))
+        screen.blit(quit_msg_surface, quit_msg_rect)
 
     # Update everything
     pygame.display.update()
