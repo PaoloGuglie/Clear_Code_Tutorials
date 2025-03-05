@@ -34,8 +34,13 @@ def obstacle_movement(obstacle_list):
     if obstacle_list:
         # Move the obstacles
         for obstacle_rect in obstacle_list:
-            obstacle_rect.x -= SNAIL_SPEED
-            screen.blit(snail_surface, obstacle_rect)
+            obstacle_rect.x -= OBSTACLE_SPEED
+
+            # Snail or Fly?
+            if obstacle_rect.bottom == 300:
+                screen.blit(snail_surface, obstacle_rect)
+            else:
+                screen.blit(fly_surface, obstacle_rect)
 
         # Delete out of bounds obstacles (using list comprehension)
         obstacle_list = [i for i in obstacle_list if i.x > -100]
@@ -59,6 +64,7 @@ ground_surface = pygame.image.load("../graphics/ground.png").convert()
 
 # Obstacles
 snail_surface = pygame.image.load('../graphics/snail/snail1.png').convert_alpha()
+fly_surface = pygame.image.load('../graphics/Fly/Fly1.png').convert_alpha()
 
 obstacle_rect_list = []
 
@@ -68,7 +74,7 @@ player_rectangle = player_surface.get_rect(topleft=(80, 215))
 
 # Timer
 obstacle_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(obstacle_timer, 2000)
+pygame.time.set_timer(obstacle_timer, SPAWN_TIME)
 
 #                   MAIN LOOP
 while True:
@@ -98,8 +104,12 @@ while True:
                 elif event.key == pygame.K_q:
                     quit_game()
 
+        # Add a new enemy
         if event.type == obstacle_timer and GAME_ACTIVE:
-            obstacle_rect_list.append(snail_surface.get_rect(bottomright=(randint(900, 1000), 300)))
+            if randint(0, 2):
+                obstacle_rect_list.append(snail_surface.get_rect(bottomright=(randint(900, 1000), 300)))
+            else:
+                obstacle_rect_list.append(fly_surface.get_rect(bottomright=(randint(900, 1000), 200)))
 
     if GAME_ACTIVE:
         # Position the items on the display surface
@@ -122,7 +132,7 @@ while True:
 
         # Check if the obstacle reached end of screen
         for obstacle in obstacle_rect_list:
-            if -1 <= obstacle.x <= 4:
+            if -3 <= obstacle.x <= 4:
                 # Update score and text
                 SCORE += 1
                 display_score()
