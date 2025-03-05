@@ -4,7 +4,7 @@ HEIGHT = 400
 CAPTION = "Runner"
 
 # Gameplay
-GAME_ACTIVE = True
+GAME_ACTIVE = False
 SCORE = 0
 
 # Clock
@@ -12,9 +12,8 @@ FRAME_RATE = 60
 START_TIME = 0
 FINAL_TIME = 0
 
-# Snail position
-SNAIL_POSITION = (700, 265)
-SNAIL_SPEED = 8
+# Snail
+SNAIL_SPEED = 6
 
 # Physics
 PLAYER_GRAVITY = 0
