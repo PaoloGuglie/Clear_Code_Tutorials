@@ -5,6 +5,48 @@ from random import randint
 from settings import *
 
 
+#                   CLASSES
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        # Data
+        super().__init__()
+        player_walk_1 = pygame.image.load('../graphics/Player/player_walk_1.png').convert_alpha()
+        player_walk_2 = pygame.image.load('../graphics/Player/player_walk_2.png').convert_alpha()
+        self.player_walk = [player_walk_1, player_walk_2]
+        self.player_jump = pygame.image.load('../graphics/Player/jump.png').convert_alpha()
+        self.player_index = 0
+        # Default sprite
+        self.image = self.player_walk[self.player_index]
+        self.rect = self.image.get_rect(topleft=(50, 215))
+        self.gravity = 0
+
+    def player_input(self):
+        keys = pygame.key.get_pressed()
+        # Jump
+        if keys[pygame.K_SPACE] and self.rect.y >= 215:
+            self.gravity = -20
+
+    def apply_gravity(self):
+        self.gravity += 1
+        self.rect.y += self.gravity
+        if self.rect.y >= 215:
+            self.rect.y = 215
+
+    def animation(self):
+        if self.rect.bottom < 215:
+            # Show jump animation
+            self.image = self.player_jump
+        else:
+            self.player_index += 0.1
+            self.image = self.player_walk[int(self.player_index) % 2]  # Clever by me!
+
+    # Run the other functions
+    def update(self):
+        self.player_input()
+        self.apply_gravity()
+        self.animation()
+
+
 #                   FUNCTIONS
 def quit_game():
     pygame.quit()
@@ -51,18 +93,6 @@ def obstacle_movement(obstacle_list):
         return []
 
 
-def player_animation():
-    # Declare global variables that will be changed
-    global player_surface, player_index
-
-    if player_rectangle.bottom < 215:
-        # Show jump animation
-        player_surface = player_jump
-    else:
-        player_index += 0.1
-        player_surface = player_walk[int(player_index) % 2]  # Clever by me!
-
-
 #                   INITIALIZE
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -91,16 +121,9 @@ fly_surface = fly_frames[fly_frame_index]
 # Obstacles list
 obstacle_rect_list = []
 
-# Player assets
-player_walk_1 = pygame.image.load('../graphics/Player/player_walk_1.png').convert_alpha()
-player_walk_2 = pygame.image.load('../graphics/Player/player_walk_2.png').convert_alpha()
-player_walk = [player_walk_1, player_walk_2]
-player_jump = pygame.image.load('../graphics/Player/jump.png').convert_alpha()
-player_index = 0
-
-# Get player surface and rectangle
-player_surface = player_walk[player_index]
-player_rectangle = player_surface.get_rect(topleft=(80, 215))
+# Player
+player = pygame.sprite.GroupSingle()
+player.add(Player())
 
 # Obstacle spawn timer
 obstacle_timer = pygame.USEREVENT + 1
@@ -123,14 +146,7 @@ while True:
         if event.type == pygame.QUIT:
             quit_game()
 
-        if GAME_ACTIVE:
-            # Jump
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    if player_rectangle.y == 215:
-                        PLAYER_GRAVITY = -20
-
-        else:
+        if not GAME_ACTIVE:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     # Restart the game
@@ -164,17 +180,12 @@ while True:
         screen.blit(ground_surface, (0, 300))
 
         # Player
-        player_animation()
-        screen.blit(player_surface, player_rectangle)
+        player.draw(screen)
+        player.update()
 
         # Display score and time
         display_score()
         display_time()
-
-        # Player movement
-        if PLAYER_GRAVITY < 0 or player_rectangle.y != 215:
-            PLAYER_GRAVITY += 1
-            player_rectangle.y += PLAYER_GRAVITY
 
         # Obstacle movement
         obstacle_rect_list = obstacle_movement(obstacle_rect_list)
@@ -185,14 +196,6 @@ while True:
                 # Update score and text
                 SCORE += 1
                 display_score()
-
-        # Check for player-obstacle collision
-        for obstacle in obstacle_rect_list:
-            if player_rectangle.colliderect(obstacle):
-                # Game over
-                GAME_ACTIVE = False
-                # Get current time
-                FINAL_TIME = int(pygame.time.get_ticks() / 1000)
 
     else:
         # Game over screen
