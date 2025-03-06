@@ -5,13 +5,10 @@ CAPTION = "Runner"
 
 # Gameplay
 GAME_ACTIVE = False
-SCORE = 0
 SPAWN_TIME = 1000
 
 # Clock
 FRAME_RATE = 60
-START_TIME = 0
-FINAL_TIME = 0
 
 # Obstacles
 OBSTACLE_SPEED = 8
