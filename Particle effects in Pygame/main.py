@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 
 
 #                   CLASSES
@@ -14,7 +15,8 @@ class ParticlePrinciple:
             self.delete_particles()
             for particle in self.items:
                 # move
-                particle[0][1] += particle[2]
+                particle[0][0] += particle[2][0]
+                particle[0][1] += particle[2][1]
                 # shrink
                 particle[1] -= 0.2
                 # draw a circle around the particle
@@ -23,14 +25,15 @@ class ParticlePrinciple:
 
     # add particles
     def add_particle(self):
-        pos_x = 250
-        pos_y = 250
+        pos_x = pygame.mouse.get_pos()[0]
+        pos_y = pygame.mouse.get_pos()[1]
         radius = 10
-        direction = -5
+        direction_x = random.randint(-3, 3)
+        direction_y = random.randint(-3, 3)
         particle_circle = [
             [pos_x, pos_y],
             radius,
-            direction
+            [direction_x, direction_y]
         ]
         self.items.append(particle_circle)
 
@@ -55,7 +58,7 @@ particles = ParticlePrinciple()
 
 # Custom events
 PARTICLE_EVENT = pygame.USEREVENT + 1
-SPAWN_TIMER_MS = 150
+SPAWN_TIMER_MS = 80
 pygame.time.set_timer(PARTICLE_EVENT, SPAWN_TIMER_MS)
 
 while True:
@@ -64,6 +67,9 @@ while True:
             quit_game()
         if event.type == PARTICLE_EVENT:
             particles.add_particle()
+
+    # Hide the mouse cursor
+    pygame.mouse.set_visible(False)
 
     # Draw elements
     screen.fill('Black')
