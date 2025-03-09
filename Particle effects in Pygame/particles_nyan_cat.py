@@ -7,7 +7,7 @@ import random
 class ParticleNyan:
     def __init__(self):
         self.items = []
-        self.size = 8
+        self.size = 12
 
     # move the particles
     def emit(self):
@@ -16,9 +16,12 @@ class ParticleNyan:
             self.delete_particles()
             for particle in self.items:
                 # move
-                particle[0].x -= 2
+                particle[0].x -= 1
                 # draw a circle around the particle
                 pygame.draw.rect(screen, particle[1], particle[0])
+
+        # Draw cat
+        self.draw_nyan_cat()
 
     # add particles
     def add_particle(self, offset, color):
@@ -36,6 +39,10 @@ class ParticleNyan:
         items_copy = [i for i in self.items if i[0].x > 0]
         self.items = items_copy
 
+    def draw_nyan_cat(self):
+        nyan_rect = nyan_surface.get_rect(center=pygame.mouse.get_pos())
+        screen.blit(nyan_surface, nyan_rect)
+
 
 #                   FUNCTIONS
 def quit_game():
@@ -48,13 +55,15 @@ pygame.init()
 screen = pygame.display.set_mode((500, 500))
 clock = pygame.time.Clock()
 
+# Nyan cat
 nyan_surface = pygame.image.load('nyan_cat.png').convert_alpha()
+nyan_surface = pygame.transform.scale(nyan_surface, (150, 100))
 
 particles = ParticleNyan()
 
 # Custom events
 PARTICLE_EVENT = pygame.USEREVENT + 1
-SPAWN_TIMER_MS = 80
+SPAWN_TIMER_MS = 40
 pygame.time.set_timer(PARTICLE_EVENT, SPAWN_TIMER_MS)
 
 while True:
@@ -62,7 +71,12 @@ while True:
         if event.type == pygame.QUIT:
             quit_game()
         if event.type == PARTICLE_EVENT:
-            particles.add_particle(0, 'Red')
+            particles.add_particle(-30, 'Red')
+            particles.add_particle(-18, 'Orange')
+            particles.add_particle(-6, 'Yellow')
+            particles.add_particle(6, 'Green')
+            particles.add_particle(18, 'Blue')
+            particles.add_particle(30, 'Purple')
 
     # Hide the mouse cursor
     pygame.mouse.set_visible(False)
