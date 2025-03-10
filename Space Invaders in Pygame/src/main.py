@@ -19,16 +19,25 @@ class Game:
         self.shape = obstacle.shape
         self.block_size = settings["obstacle"]["block-size"]
         self.blocks = pygame.sprite.Group()
-        self.create_obstacle(40, 480)
+        self.obstacle_amount = settings["obstacle"]["quantity"]
+        self.obstacle_x_positions = [num * (settings["screen"]["width"] / self.obstacle_amount) for num in range(self.obstacle_amount)]
+        self.create_multiple_obstacles(45, 480, self.obstacle_x_positions)
 
-    def create_obstacle(self, x_start, y_start):
+    def create_obstacle(self, x_start, y_start, offset_x):
+        """ Block positioning logic per obstacle """
         for row_index, row in enumerate(self.shape):
             for col_index, col in enumerate(row):
                 if col == 'x':
-                    x = x_start + col_index * self.block_size
+                    # include start position and offset
+                    x = x_start + col_index * self.block_size + offset_x
                     y = y_start + row_index * self.block_size
                     block = obstacle.Block(self.block_size, 'Red', x, y)
                     self.blocks.add(block)
+
+    def create_multiple_obstacles(self, x_start, y_start, offset_list):
+        """ Number of obstacles positioned and distance between them """
+        for x in offset_list:
+            self.create_obstacle(x_start, y_start, x)
 
     def run(self):
         # Update sprite groups
