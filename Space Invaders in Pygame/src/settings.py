@@ -8,9 +8,9 @@ def load_settings():
     return data
 
 
-def update_settings():
+def update_settings(new_settings):
     with open('game_data.json', 'w') as file:
-        json.dump(settings, file, indent=2, ensure_ascii=False)
+        json.dump(new_settings, file, indent=2, ensure_ascii=False)
         file.flush()  # to force immediate write to disk
 
 

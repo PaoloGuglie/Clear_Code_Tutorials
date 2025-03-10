@@ -4,6 +4,10 @@
     "height": 600
   },
   "player": {
-    "speed": 97
+    "speed": 5
+  },
+  "laser": {
+    "speed": -8,
+    "cooldown": 500
   }
 }

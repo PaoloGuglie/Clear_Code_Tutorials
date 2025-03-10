@@ -16,9 +16,10 @@ class Game:
 
     def run(self):
         # Update sprite groups
-
+        self.player.update()  # (update player and lasers)
         # Draw sprite groups
         self.player.draw(screen)
+        self.player.sprite.lasers.draw(screen)
 
 
 def quit_game():
@@ -32,9 +33,6 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((settings["screen"]["width"], settings["screen"]["height"]))
     clock = pygame.time.Clock()
     game = Game()
-
-    settings["player"]["speed"] = 5
-    update_settings()
 
     while True:
         # Events
