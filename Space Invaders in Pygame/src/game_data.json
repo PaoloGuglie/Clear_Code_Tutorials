@@ -6,6 +6,17 @@
   "player": {
     "speed": 5
   },
+  "alien": {
+    "color": {
+      "red": "../graphics/red.png",
+      "yellow": "../graphics/yellow.png",
+      "green": "../graphics/green.png"
+    },
+    "movement": {
+      "x_direction": 1,
+      "y_drop": 10
+    }
+  },
   "laser": {
     "speed": -8,
     "cooldown": 500
