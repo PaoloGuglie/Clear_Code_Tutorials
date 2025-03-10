@@ -9,5 +9,8 @@
   "laser": {
     "speed": -8,
     "cooldown": 500
+  },
+  "obstacle": {
+    "block-size": 6
   }
 }
