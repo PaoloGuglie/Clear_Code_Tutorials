@@ -19,6 +19,9 @@ class Player(pygame.sprite.Sprite):
         # player lasers
         self.lasers = pygame.sprite.Group()
 
+        self.laser_sound = pygame.mixer.Sound('../audio/laser.wav')
+        self.laser_sound.set_volume(0.5)
+
     def get_input(self):
         keys = pygame.key.get_pressed()
 
@@ -33,6 +36,8 @@ class Player(pygame.sprite.Sprite):
             # add cooldown time to recharge
             self.ready = False
             self.laser_time = pygame.time.get_ticks()
+            # play laser sound
+            self.laser_sound.play()
 
     def recharge(self):
         if not self.ready:

@@ -18,7 +18,7 @@
       "green": "../graphics/green.png"
     },
     "movement": {
-      "x_direction": -1,
+      "x_direction": 1,
       "y_drop": 10
     },
     "laser": {

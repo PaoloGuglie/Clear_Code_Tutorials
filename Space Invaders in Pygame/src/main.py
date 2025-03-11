@@ -44,6 +44,16 @@ class Game:
         self.extra = pygame.sprite.GroupSingle()
         self.extra_spawn_time = randint(400, 800)
 
+        # Audio
+        music = pygame.mixer.Sound('../audio/music.wav')
+        music.set_volume(0.2)
+        music.play(loops=-1)  # play forever
+
+        self.laser_sound = pygame.mixer.Sound('../audio/laser.wav')
+        self.laser_sound.set_volume(0.5)
+        self.explosion_sound = pygame.mixer.Sound('../audio/explosion.wav')
+        self.explosion_sound.set_volume(0.3)
+
     def create_obstacle(self, x_start, y_start, offset_x):
         """ Block positioning logic per obstacle """
         for row_index, row in enumerate(self.shape):
@@ -95,6 +105,7 @@ class Game:
             random_alien = choice(self.aliens.sprites())
             laser_sprite = Laser(random_alien.rect.center, settings["alien"]["laser"]["speed"])
             self.alien_lasers.add(laser_sprite)
+            self.laser_sound.play()
 
     def extra_alien_timer(self):
         self.extra_spawn_time -= 1
@@ -111,6 +122,7 @@ class Game:
                 if pygame.sprite.spritecollide(laser, self.blocks, True):
                     # destroy the laser after first block collision
                     laser.kill()
+                    self.explosion_sound.play()
 
                 # alien collissions
                 aliens_hit = pygame.sprite.spritecollide(laser, self.aliens, True)  # (returns a list)
@@ -118,11 +130,13 @@ class Game:
                     for alien in aliens_hit:
                         self.score += alien.value
                     laser.kill()
+                    self.explosion_sound.play()
 
                 # extra collision
                 if pygame.sprite.spritecollide(laser, self.extra, True):
                     self.score += 500
                     laser.kill()
+                    self.explosion_sound.play()
 
         # Alien lasers
         if self.alien_lasers:
@@ -132,10 +146,12 @@ class Game:
                 if pygame.sprite.spritecollide(laser, self.blocks, True):
                     # destroy the laser after first block collision
                     laser.kill()
+                    self.explosion_sound.play()
 
                 # player collissions
                 if pygame.sprite.spritecollide(laser, self.player, False):
                     laser.kill()
+                    self.explosion_sound.play()
                     self.lives -= 1
                     if self.lives <= 0:
                         quit_game()
@@ -161,6 +177,13 @@ class Game:
         score_rect = score_surf.get_rect(topleft=(10, -10))
         screen.blit(score_surf, score_rect)
 
+    def victory_message(self):
+        if not self.aliens.sprites():
+            victory_surface = self.font.render("You won!", True, "white")
+            victory_rect = victory_surface.get_rect(center=(settings["screen"]["width"] / 2,
+                                                            settings["screen"]["height"] / 2))
+            screen.blit(victory_surface, victory_rect)
+
     def run(self):
         # Update sprite groups
         self.player.update()  # (update player and lasers)
@@ -182,6 +205,25 @@ class Game:
         self.blocks.draw(screen)
         self.display_lives()
         self.display_score()
+        self.victory_message()
+
+
+class CRT:
+    def __init__(self):
+        self.tv = pygame.image.load('../graphics/tv.png').convert_alpha()
+        self.tv = pygame.transform.scale(self.tv, (settings["screen"]["width"], settings["screen"]["height"]))
+
+    def draw(self):
+        self.tv.set_alpha(randint(75, 90))  # use random opacity to simulate CRT flickering
+        self.create_crt_lines()
+        screen.blit(self.tv, (0, 0))
+
+    def create_crt_lines(self):
+        line_height = 3
+        line_amount = int(settings["screen"]["height"] / line_height)
+        for line in range(line_amount):
+            y_pos = line * line_height
+            pygame.draw.line(self.tv, 'black', (0, y_pos), (settings["screen"]["width"], y_pos), 2)
 
 
 def quit_game():
@@ -195,6 +237,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((settings["screen"]["width"], settings["screen"]["height"]))
     clock = pygame.time.Clock()
     game = Game()
+    crt = CRT()
 
     ALIEN_LASER = pygame.USEREVENT + 1
     pygame.time.set_timer(ALIEN_LASER, settings["alien"]["laser"]["timer"])
@@ -208,8 +251,9 @@ if __name__ == '__main__':
                 game.alien_shoot()
 
         # Update and draw elements
-        screen.fill('Black')
+        screen.fill((40, 40, 40))
         game.run()
+        crt.draw()
 
         # Refresh
         pygame.display.flip()
