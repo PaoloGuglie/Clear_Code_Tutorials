@@ -29,5 +29,6 @@
   "obstacle": {
     "quantity": 4,
     "block-size": 6
-  }
+  },
+  "high-score": 0
 }

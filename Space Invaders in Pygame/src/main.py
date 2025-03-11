@@ -18,10 +18,14 @@ class Game:
         player_sprite = Player((settings["screen"]["width"] / 2, settings["screen"]["height"]))
         self.player = pygame.sprite.GroupSingle(player_sprite)
 
-        # Health & Score
+        # Health
         self.lives = settings["player"]["lives"]
         self.life_surface = pygame.image.load('../graphics/player.png').convert_alpha()
         self.lives_x_start_pos = settings["screen"]["width"] - (self.life_surface.get_width() * 2 + 30)
+
+        # Score
+        self.score = 0
+        self.font = pygame.font.Font('../font/Pixeled.ttf', 20)
 
         # Obstacle
         self.shape = obstacle.shape
@@ -109,11 +113,15 @@ class Game:
                     laser.kill()
 
                 # alien collissions
-                if pygame.sprite.spritecollide(laser, self.aliens, True):
+                aliens_hit = pygame.sprite.spritecollide(laser, self.aliens, True)  # (returns a list)
+                if aliens_hit:
+                    for alien in aliens_hit:
+                        self.score += alien.value
                     laser.kill()
 
                 # extra collision
                 if pygame.sprite.spritecollide(laser, self.extra, True):
+                    self.score += 500
                     laser.kill()
 
         # Alien lasers
@@ -148,6 +156,11 @@ class Game:
             x = self.lives_x_start_pos + (life * (self.life_surface.get_width() + 15))
             screen.blit(self.life_surface, (x, 8))
 
+    def display_score(self):
+        score_surf = self.font.render(f"Score: {self.score}", True, 'White')
+        score_rect = score_surf.get_rect(topleft=(10, -10))
+        screen.blit(score_surf, score_rect)
+
     def run(self):
         # Update sprite groups
         self.player.update()  # (update player and lasers)
@@ -156,9 +169,10 @@ class Game:
         self.alien_lasers.update()  # (update alien lasers)
         self.extra_alien_timer()
         self.extra.update()  # (update extra alien)
-        self.display_lives()
+
         # check collisions
         self.collision_checks()
+
         # Draw sprite groups
         self.player.draw(screen)
         self.aliens.draw(screen)
@@ -166,6 +180,8 @@ class Game:
         self.extra.draw(screen)
         self.player.sprite.lasers.draw(screen)
         self.blocks.draw(screen)
+        self.display_lives()
+        self.display_score()
 
 
 def quit_game():
