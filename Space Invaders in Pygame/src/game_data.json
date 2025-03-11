@@ -4,7 +4,11 @@
     "height": 600
   },
   "player": {
-    "speed": 5
+    "speed": 5,
+    "laser": {
+      "speed": -8,
+      "cooldown": 500
+    }
   },
   "alien": {
     "color": {
@@ -15,11 +19,11 @@
     "movement": {
       "x_direction": 1,
       "y_drop": 10
+    },
+    "laser": {
+      "speed": 6,
+      "timer": 800
     }
-  },
-  "laser": {
-    "speed": -8,
-    "cooldown": 500
   },
   "obstacle": {
     "quantity": 4,

@@ -1,10 +1,12 @@
 import pygame
 import sys
 import json
+from random import choice, randint
 
 from settings import settings, update_settings
 from player import Player
-from alien import Alien
+from alien import Alien, Extra
+from laser import Laser
 import obstacle
 
 
@@ -24,9 +26,14 @@ class Game:
         self.obstacle_x_positions = [num * (settings["screen"]["width"] / self.obstacle_amount) for num in range(self.obstacle_amount)]
         self.create_multiple_obstacles(45, 480, self.obstacle_x_positions)
 
-        # Alien
+        # Aliens
         self.aliens = pygame.sprite.Group()
         self.alien_setup(6, 8, 60, 48, 70, 40)
+        # alien lasers
+        self.alien_lasers = pygame.sprite.Group()
+        # extra alien
+        self.extra = pygame.sprite.GroupSingle()
+        self.extra_spawn_time = randint(400, 800)
 
     def create_obstacle(self, x_start, y_start, offset_x):
         """ Block positioning logic per obstacle """
@@ -74,14 +81,31 @@ class Game:
             for alien in self.aliens.sprites():
                 alien.rect.y += distance
 
+    def alien_shoot(self):
+        if self.aliens:
+            random_alien = choice(self.aliens.sprites())
+            laser_sprite = Laser(random_alien.rect.center, settings["alien"]["laser"]["speed"])
+            self.alien_lasers.add(laser_sprite)
+
+    def extra_alien_timer(self):
+        self.extra_spawn_time -= 1
+        if self.extra_spawn_time <= 0:
+            self.extra.add(Extra(choice(['right', 'left']), settings["screen"]["width"]))
+            self.extra_spawn_time = randint(400, 800)
+
     def run(self):
         # Update sprite groups
         self.player.update()  # (update player and lasers)
         self.aliens.update(settings["alien"]["movement"]["x_direction"])
         self.alien_position_checker()
+        self.alien_lasers.update()  # (update alien lasers)
+        self.extra_alien_timer()
+        self.extra.update()  # (update extra alien)
         # Draw sprite groups
         self.player.draw(screen)
         self.aliens.draw(screen)
+        self.alien_lasers.draw(screen)
+        self.extra.draw(screen)
         self.player.sprite.lasers.draw(screen)
         self.blocks.draw(screen)
 
@@ -98,11 +122,16 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
     game = Game()
 
+    ALIEN_LASER = pygame.USEREVENT + 1
+    pygame.time.set_timer(ALIEN_LASER, settings["alien"]["laser"]["timer"])
+
     while True:
         # Events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit_game()
+            if event.type == ALIEN_LASER:
+                game.alien_shoot()
 
         # Update and draw elements
         screen.fill('Black')

@@ -15,8 +15,8 @@ class Player(pygame.sprite.Sprite):
         # shooting
         self.ready = True
         self.laser_time = 0
-        self.laser_cooldown = settings["laser"]["cooldown"]
-        # lasers
+        self.laser_cooldown = settings["player"]["laser"]["cooldown"]
+        # player lasers
         self.lasers = pygame.sprite.Group()
 
     def get_input(self):
@@ -41,7 +41,8 @@ class Player(pygame.sprite.Sprite):
                 self.ready = True
 
     def shoot_laser(self):
-        self.lasers.add(Laser(self.rect.center))  # add laser to sprite group
+        # Add laser to sprite group
+        self.lasers.add(Laser(self.rect.center, settings["player"]["laser"]["speed"]))
 
     def update(self):
         self.get_input()

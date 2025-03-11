@@ -4,12 +4,12 @@ from settings import settings
 
 
 class Laser(pygame.sprite.Sprite):
-    def __init__(self, pos):
+    def __init__(self, pos, speed):
         super().__init__()
         self.image = pygame.Surface((4, 20))
         self.image.fill('White')
         self.rect = self.image.get_rect(center=pos)
-        self.speed = settings["laser"]["speed"]
+        self.speed = speed
 
     def destroy(self):
         if self.rect.y <= -50 or self.rect.y >= settings["screen"]["height"]:
