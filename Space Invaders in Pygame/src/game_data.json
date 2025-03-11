@@ -1,14 +1,15 @@
 {
   "screen": {
     "width": 600,
-    "height": 600
+    "height": 700
   },
   "player": {
     "speed": 5,
     "laser": {
       "speed": -8,
       "cooldown": 500
-    }
+    },
+    "lives": 3
   },
   "alien": {
     "color": {
@@ -17,7 +18,7 @@
       "green": "../graphics/green.png"
     },
     "movement": {
-      "x_direction": 1,
+      "x_direction": -1,
       "y_drop": 10
     },
     "laser": {
