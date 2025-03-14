@@ -7,6 +7,34 @@ def quit_game():
     sys.exit()
 
 
+def create_simple_outline():
+    screen.blit(obstacle_surface, obstacle_position)
+    screen.blit(new_obstacle_surface, obstacle_position)
+
+    for point in obstacle_mask.outline():
+        x = point[0] + obstacle_position[0]
+        y = point[1] + obstacle_position[1]
+        pygame.draw.circle(screen, 'black', (x, y), 4)
+
+
+def create_complex_outline():
+    offset = 10
+    screen.blit(new_obstacle_surface, (obstacle_position[0] + offset, obstacle_position[1]))  # right
+    screen.blit(new_obstacle_surface, (obstacle_position[0] - offset, obstacle_position[1]))  # left
+    screen.blit(new_obstacle_surface, (obstacle_position[0], obstacle_position[1] - offset))  # top
+    screen.blit(new_obstacle_surface, (obstacle_position[0], obstacle_position[1] + offset))  # bottom
+    screen.blit(new_obstacle_surface, (obstacle_position[0] + offset, obstacle_position[1] - offset))  # top-right
+    screen.blit(new_obstacle_surface, (obstacle_position[0] + offset, obstacle_position[1] + offset))  # bottom-right
+    screen.blit(new_obstacle_surface, (obstacle_position[0] - offset, obstacle_position[1] + offset))  # bottom-left
+    screen.blit(new_obstacle_surface, (obstacle_position[0] - offset, obstacle_position[1] - offset))  # topleft
+
+    screen.blit(obstacle_surface, obstacle_position)
+
+
+# Choose outline
+choice = input("Choose the outline: simple (s) or complex (c):  - ")
+
+# Initialize pygame
 pygame.init()
 screen = pygame.display.set_mode((800, 800))
 clock = pygame.time.Clock()
@@ -34,8 +62,16 @@ while True:
 
     # Draw
     screen.fill('grey')
-    screen.blit(obstacle_surface, obstacle_position)
-    screen.blit(new_obstacle_surface, obstacle_position)
+
+    if choice == "s":
+        create_simple_outline()
+
+    elif choice == "c":
+        create_complex_outline()
+
+    else:
+        print("Wrong input. Rerun the program and type better!")
+        quit_game()
 
     # Refresh screen
     pygame.display.update()
