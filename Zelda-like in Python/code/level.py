@@ -3,12 +3,14 @@ import pygame
 from settings import *
 from tile import Tile
 from player import Player
+from debug import debug
 
 
 class Level:
     def __init__(self):
 
         # get the display surface
+        self.player = None
         self.display_surface = pygame.display.get_surface()
 
         # sprite groups setup
@@ -30,8 +32,10 @@ class Level:
                 if col == 'x':
                     Tile((x_pos, y_pos), [self.visible_sprites, self.obstacle_sprites])
                 elif col == 'p':
-                    Player((x_pos, y_pos), [self.visible_sprites])
+                    self.player = Player((x_pos, y_pos), [self.visible_sprites], self.obstacle_sprites)
 
     def run(self):
         # Update and draw the game
+        self.visible_sprites.update()
         self.visible_sprites.draw(self.display_surface)
+        debug(self.player.direction)
