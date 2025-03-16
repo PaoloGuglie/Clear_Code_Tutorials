@@ -2,6 +2,7 @@ import pygame
 import sys
 
 from settings import *
+from level import Level
 
 
 def quit_game():
@@ -11,11 +12,13 @@ def quit_game():
 
 class Game:
     def __init__(self):
-
         # Setup
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        pygame.display.set_caption("Zelda")
         self.clock = pygame.time.Clock()
+
+        self.level = Level()
 
     def run(self):
         while True:
@@ -24,8 +27,11 @@ class Game:
                 if event.type == pygame.QUIT:
                     quit_game()
 
-            # Draw elements
+            # Background
             self.screen.fill('Black')
+
+            # Run the level
+            self.level.run()
 
             # Refresh game
             pygame.display.update()
