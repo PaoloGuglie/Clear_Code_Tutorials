@@ -21,7 +21,6 @@ class Level:
         self.create_map()
 
     def create_map(self):
-
         # Items positions
         for row_index, row in enumerate(WORLD_MAP):
             for col_index, col in enumerate(row):
@@ -51,10 +50,11 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.offset = pygame.math.Vector2()  # offset for camera centering
 
     def custom_draw(self, player):
-        for sprite in self.sprites():
-            # get the offset coordinates
-            self.offset.x = player.rect.centerx - self.half_width
-            self.offset.y = player.rect.centery - self.half_height
+        # get the offset coordinates
+        self.offset.x = player.rect.centerx - self.half_width
+        self.offset.y = player.rect.centery - self.half_height
+
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
             # get the offset position for each element
             offset_pos = sprite.rect.topleft - self.offset
             # draw it to the screen
