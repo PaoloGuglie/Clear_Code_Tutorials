@@ -41,11 +41,11 @@ class Player(pygame.sprite.Sprite):
 
         # move the player
         self.rect.x += self.direction.x * speed
-        self.collisions('horizontal')
+        self.collision('horizontal')
         self.rect.y += self.direction.y * speed
-        self.collisions('vertical')
+        self.collision('vertical')
 
-    def collisions(self, direction):
+    def collision(self, direction):
 
         if direction == 'horizontal':
             for sprite in self.obstacle_sprites:
