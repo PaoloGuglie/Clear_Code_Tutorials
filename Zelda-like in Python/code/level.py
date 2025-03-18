@@ -4,6 +4,7 @@ from settings import *
 from tile import Tile
 from player import Player
 from debug import debug
+from support import *
 
 
 class Level:
@@ -18,9 +19,9 @@ class Level:
         self.obstacle_sprites = pygame.sprite.Group()
 
         # sprite setup
-        self.create_map()
+        self.create_map_new()
 
-    def create_map(self):
+    def create_map(self):  # DEPRECATED FUNCTION
         # Items positions
         for row_index, row in enumerate(WORLD_MAP):
             for col_index, col in enumerate(row):
@@ -32,6 +33,23 @@ class Level:
                     Tile((x_pos, y_pos), [self.visible_sprites, self.obstacle_sprites])
                 elif col == 'p':
                     self.player = Player((x_pos, y_pos), [self.visible_sprites], self.obstacle_sprites)
+
+    def create_map_new(self):
+        layouts = {
+            'boundary': import_csv_layout('../map/map_FloorBlocks.csv')
+        }
+
+        # Loop through the dictionary
+        for style, layout in layouts.items():
+            for row_index, row in enumerate(layout):
+                for col_index, col in enumerate(row):
+                    x_pos = col_index * TILESIZE
+                    y_pos = row_index * TILESIZE
+                # Place boundaries
+                if style == 'boundary':
+                    Tile((x_pos, y_pos), [self.visible_sprites, self.obstacle_sprites], 'invisible')
+
+        self.player = Player((2000, 1400), [self.visible_sprites], self.obstacle_sprites)
 
     def run(self):
         # Update and draw the game
