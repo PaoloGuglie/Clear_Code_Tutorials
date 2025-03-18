@@ -43,11 +43,12 @@ class Level:
         for style, layout in layouts.items():
             for row_index, row in enumerate(layout):
                 for col_index, col in enumerate(row):
-                    x_pos = col_index * TILESIZE
-                    y_pos = row_index * TILESIZE
-                # Place boundaries
-                if style == 'boundary':
-                    Tile((x_pos, y_pos), [self.visible_sprites, self.obstacle_sprites], 'invisible')
+                    if col != '-1':
+                        x_pos = col_index * TILESIZE
+                        y_pos = row_index * TILESIZE
+                        # Place boundaries
+                        if style == 'boundary':
+                            Tile((x_pos, y_pos), [self.obstacle_sprites], 'invisible')
 
         self.player = Player((2000, 1400), [self.visible_sprites], self.obstacle_sprites)
 

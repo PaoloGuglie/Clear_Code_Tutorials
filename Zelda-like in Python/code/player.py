@@ -49,6 +49,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = self.hitbox.center
 
     def collision(self, direction):
+        """ Check collisions with obstacle sprites """
 
         if direction == 'horizontal':
             for sprite in self.obstacle_sprites:
