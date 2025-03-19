@@ -16,6 +16,7 @@ def import_csv_layout(path):
 
 
 def import_folder(path):
+    """ import images from folders and convert them to pygame surfaces """
     surface_list = []
 
     for _, __, image_files in walk(path):
