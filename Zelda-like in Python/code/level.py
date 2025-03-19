@@ -1,4 +1,5 @@
 import pygame
+from random import choice
 
 from settings import *
 from tile import Tile
@@ -36,7 +37,14 @@ class Level:
 
     def create_map_new(self):
         layouts = {
-            'boundary': import_csv_layout('../map/map_FloorBlocks.csv')
+            'boundary': import_csv_layout('../map/map_FloorBlocks.csv'),
+            'grass': import_csv_layout('../map/map_Grass.csv'),
+            'object': import_csv_layout('../map/map_LargeObjects.csv')
+        }
+
+        graphics = {
+            'grass': import_folder('../graphics/grass'),
+            'objects': import_folder('../graphics/objects')
         }
 
         # Loop through the dictionary
@@ -46,9 +54,18 @@ class Level:
                     if col != '-1':
                         x_pos = col_index * TILESIZE
                         y_pos = row_index * TILESIZE
-                        # Place boundaries
+
+                        # Place items
                         if style == 'boundary':
                             Tile((x_pos, y_pos), [self.obstacle_sprites], 'invisible')
+
+                        if style == 'grass':
+                            random_grass_image = choice(graphics['grass'])
+                            Tile((x_pos, y_pos), [self.visible_sprites, self.obstacle_sprites], 'grass', random_grass_image)
+
+                        if style == 'object':  # (using images IDs)
+                            object_surface = graphics['objects'][int(col)]
+                            Tile((x_pos, y_pos), [self.visible_sprites, self.obstacle_sprites], 'object', object_surface)
 
         self.player = Player((2000, 1400), [self.visible_sprites], self.obstacle_sprites)
 
