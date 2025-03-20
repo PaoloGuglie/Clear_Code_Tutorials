@@ -20,6 +20,9 @@ class Level:
         self.visible_sprites = YSortCameraGroup()
         self.obstacle_sprites = pygame.sprite.Group()
 
+        # Attack sprites
+        self.current_attack = None
+
         # sprite setup
         self.create_map_new()
 
@@ -68,12 +71,24 @@ class Level:
                             object_surface = graphics['objects'][int(col)]
                             Tile((x_pos, y_pos), [self.visible_sprites, self.obstacle_sprites], 'object', object_surface)
 
-        self.player = Player((2000, 1400), [self.visible_sprites], self.obstacle_sprites, self.create_attack)
+        self.player = Player(
+            (2000, 1400),
+            [self.visible_sprites],
+            self.obstacle_sprites,
+            self.create_attack,
+            self.destroy_attack
+        )
 
     def create_attack(self):
         """ Weapon has to be available inside the level.py file to be able
         to interact with enemies, grass..."""
-        Weapon(self.player, [self.visible_sprites])
+        self.current_attack = Weapon(self.player, [self.visible_sprites])
+
+    def destroy_attack(self):
+        if self.current_attack:
+            self.current_attack.kill()
+
+        self.current_attack = None
 
     def run(self):
         # Update and draw the game
