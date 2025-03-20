@@ -4,6 +4,7 @@ from random import choice
 from settings import *
 from tile import Tile
 from player import Player
+from weapon import Weapon
 from debug import debug
 from support import *
 
@@ -67,13 +68,17 @@ class Level:
                             object_surface = graphics['objects'][int(col)]
                             Tile((x_pos, y_pos), [self.visible_sprites, self.obstacle_sprites], 'object', object_surface)
 
-        self.player = Player((2000, 1400), [self.visible_sprites], self.obstacle_sprites)
+        self.player = Player((2000, 1400), [self.visible_sprites], self.obstacle_sprites, self.create_attack)
+
+    def create_attack(self):
+        """ Weapon has to be available inside the level.py file to be able
+        to interact with enemies, grass..."""
+        Weapon(self.player, [self.visible_sprites])
 
     def run(self):
         # Update and draw the game
         self.visible_sprites.update()
         self.visible_sprites.custom_draw(self.player)
-        debug(self.player.status)
 
 
 class YSortCameraGroup(pygame.sprite.Group):
@@ -91,7 +96,9 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.floor_rect = self.floor_surface.get_rect(topleft=(0, 0))
 
     def custom_draw(self, player):
-        # get the player offset
+        """ Used to move the game camera """
+
+        # Get the player offset
         self.offset.x = player.rect.centerx - self.half_width
         self.offset.y = player.rect.centery - self.half_height
 
