@@ -27,7 +27,12 @@ class Player(pygame.sprite.Sprite):
         self.attack_time = None
         self.create_attack = create_attack
 
+        # Obstacles
         self.obstacle_sprites = obstacle_sprites
+
+        # Weapon
+        self.weapon_index = 0
+        self.weapon = list(weapon_data.keys())[self.weapon_index]
 
     def import_player_assets(self):
         character_path = '../graphics/player/'
