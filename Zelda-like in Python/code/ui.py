@@ -29,6 +29,20 @@ class UI:
 
         # Draw bar
         pygame.draw.rect(self.display_surface, color, current_rect)
+        pygame.draw.rect(self.display_surface, UI_BORDER_COLOR, bg_rect, 3)
+
+    def show_exp(self, exp):
+        # rect
+        text_surface = self.font.render(str(int(exp)), False, TEXT_COLOR)
+        x_pos = self.display_surface.get_width() - 20
+        y_pos = self.display_surface.get_height() - 20
+        text_rect = text_surface.get_rect(bottomright=(x_pos, y_pos))
+        # background
+        pygame.draw.rect(self.display_surface, UI_BG_COLOR, text_rect.inflate(20, 10))
+        # background frame
+        pygame.draw.rect(self.display_surface, UI_BORDER_COLOR, text_rect.inflate(20, 10), 3)
+        # text
+        self.display_surface.blit(text_surface, text_rect)
 
     def display(self, player):
         self.show_bar(
@@ -43,3 +57,4 @@ class UI:
             self.energy_bar_rect,
             ENERGY_COLOR
         )
+        self.show_exp(player.exp)
