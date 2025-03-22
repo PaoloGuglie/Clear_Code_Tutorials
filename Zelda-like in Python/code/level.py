@@ -100,9 +100,11 @@ class Level:
                                 else:
                                     monster_name = 'squid'
 
-                                Enemy(monster_name,
-                                      (x_pos, y_pos),
-                                      [self.visible_sprites])
+                                Enemy(
+                                    monster_name,
+                                    (x_pos, y_pos),
+                                    [self.visible_sprites],
+                                    self.obstacle_sprites)
 
     def create_attack(self):
         """ Weapon has to be available inside the level.py file to be able
@@ -122,6 +124,7 @@ class Level:
         # Update and draw the game
         self.visible_sprites.update()
         self.visible_sprites.custom_draw(self.player)
+        self.visible_sprites.enemy_update(self.player)
         self.ui.display(self.player)
 
 
@@ -155,3 +158,10 @@ class YSortCameraGroup(pygame.sprite.Group):
             offset_pos = sprite.rect.topleft - self.offset
             # draw it to the screen
             self.display_surface.blit(sprite.image, offset_pos)
+
+    def enemy_update(self, player):
+        enemy_sprites = [i for i in self.sprites() if hasattr(i, 'sprite_type')
+                         and i.sprite_type == 'enemy']
+
+        for enemy in enemy_sprites:
+            enemy.enemy_update(player)
