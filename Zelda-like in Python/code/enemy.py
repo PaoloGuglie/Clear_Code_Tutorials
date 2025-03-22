@@ -34,6 +34,11 @@ class Enemy(Entity):
         self.notice_radius = monster_info['notice_radius']
         self.attack_type = monster_info['attack_type']
 
+        # Player interaction
+        self.can_attack = True
+        self.attack_time = None
+        self.attack_cooldown = 400
+
     def get_player_distance_and_direction(self, player):
 
         # Get distance
@@ -52,9 +57,15 @@ class Enemy(Entity):
         return distance, direction
 
     def get_status(self, player):
+        """ Set the correct status"""
+
         distance = self.get_player_distance_and_direction(player)[0]
 
-        if distance <= self.attack_radius:
+        if distance <= self.attack_radius and self.can_attack:
+            # reset animation
+            if self.status != 'attack':
+                self.frame_index = 0
+            # set attack status
             self.status = 'attack'
         elif distance <= self.notice_radius:
             self.status = 'move'
@@ -65,6 +76,7 @@ class Enemy(Entity):
         """ Given the status, the enemies perform the correct action"""
 
         if self.status == 'attack':
+            self.attack_time = pygame.time.get_ticks()
             print("attack")
         elif self.status == 'move':
             self.direction = self.get_player_distance_and_direction(player)[1]
@@ -84,8 +96,30 @@ class Enemy(Entity):
 
         return self.animations
 
+    def animate(self):
+        animation = self.animations[self.status]
+
+        # Loop over the frame index
+        self.frame_index += self.animation_speed
+        if self.frame_index >= len(animation):
+            if self.status == 'attack':
+                self.can_attack = False
+            self.frame_index = 0
+
+        # Set the image
+        self.image = animation[int(self.frame_index)]
+        self.rect = self.image.get_rect(center=self.hitbox.center)
+
+    def cooldown(self):
+        if not self.can_attack:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.attack_time >= self.attack_cooldown:
+                self.can_attack = True
+
     def update(self):
         self.move(self.speed)
+        self.animate()
+        self.cooldown()
 
     def enemy_update(self, player):
         self.get_status(player)
