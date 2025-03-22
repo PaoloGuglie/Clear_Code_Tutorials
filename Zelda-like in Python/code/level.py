@@ -4,6 +4,7 @@ from random import choice
 from settings import *
 from tile import Tile
 from player import Player
+from enemy import Enemy
 from weapon import Weapon
 from ui import UI
 from debug import debug
@@ -47,7 +48,8 @@ class Level:
         layouts = {
             'boundary': import_csv_layout('../map/map_FloorBlocks.csv'),
             'grass': import_csv_layout('../map/map_Grass.csv'),
-            'object': import_csv_layout('../map/map_LargeObjects.csv')
+            'object': import_csv_layout('../map/map_LargeObjects.csv'),
+            'entities': import_csv_layout('../map/map_Entities.csv')
         }
 
         graphics = {
@@ -75,14 +77,23 @@ class Level:
                             object_surface = graphics['objects'][int(col)]
                             Tile((x_pos, y_pos), [self.visible_sprites, self.obstacle_sprites], 'object', object_surface)
 
-        self.player = Player(
-            (2000, 1400),
-            [self.visible_sprites],
-            self.obstacle_sprites,
-            self.create_attack,
-            self.destroy_attack,
-            self.create_magic
-        )
+                        if style == 'entities':
+
+                            # Player
+                            if col == '394':
+                                self.player = Player(
+                                    (x_pos, y_pos),
+                                    [self.visible_sprites],
+                                    self.obstacle_sprites,
+                                    self.create_attack,
+                                    self.destroy_attack,
+                                    self.create_magic)
+
+                            # Enemies
+                            else:
+                                Enemy('monster',
+                                      (x_pos, y_pos),
+                                      [self.visible_sprites])
 
     def create_attack(self):
         """ Weapon has to be available inside the level.py file to be able
