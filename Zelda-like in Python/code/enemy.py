@@ -6,7 +6,12 @@ from support import *
 
 
 class Enemy(Entity):
-    def __init__(self, monster_name, pos, groups, obstacle_sprites):
+    def __init__(self,
+                 monster_name,
+                 pos,
+                 groups,
+                 obstacle_sprites,
+                 damage_player):
         super().__init__(groups)
 
         # General setup
@@ -29,7 +34,7 @@ class Enemy(Entity):
         self.exp = monster_info['exp']
         self.speed = monster_info['speed']
         self.attack_damage = monster_info['damage']
-        self.reststance = monster_info['resistance']
+        self.resistance = monster_info['resistance']
         self.attack_radius = monster_info['attack_radius']
         self.notice_radius = monster_info['notice_radius']
         self.attack_type = monster_info['attack_type']
@@ -38,6 +43,7 @@ class Enemy(Entity):
         self.can_attack = True
         self.attack_time = None
         self.attack_cooldown = 400
+        self.damage_player = damage_player
 
         # Invincibility timer
         self.vulnerable = True
@@ -82,11 +88,14 @@ class Enemy(Entity):
 
         if self.status == 'attack':
             self.attack_time = pygame.time.get_ticks()
-            print("attack")
+            self.damage_player(self.attack_damage, self.attack_type)
+
         elif self.status == 'move':
             self.direction = self.get_player_distance_and_direction(player)[1]
+
         else:
-            self.direction = pygame.math.Vector2()  # enemy not moving
+            # enemy not moving
+            self.direction = pygame.math.Vector2()
 
     def import_graphics(self, name):
         self.animations = {
@@ -115,6 +124,15 @@ class Enemy(Entity):
         self.image = animation[int(self.frame_index)]
         self.rect = self.image.get_rect(center=self.hitbox.center)
 
+        # Flickering
+        if not self.vulnerable:
+            # flickering
+            alpha = self.wave_value()
+            self.image.set_alpha(alpha)
+        else:
+            # Full visibility
+            self.image.set_alpha(255)
+
     def cooldowns(self):
         current_time = pygame.time.get_ticks()
 
@@ -133,18 +151,28 @@ class Enemy(Entity):
 
         if self.vulnerable:
 
+            self.direction = self.get_player_distance_and_direction(player)[1]
+
             if attack_type == 'weapon':
                 self.health -= player.get_full_weapon_damage()
                 self.check_death()
+
             elif attack_type == 'magic':
                 pass
 
             self.hit_time = pygame.time.get_ticks()
             self.vulnerable = False
 
+        # Damage pushback
+        self.hit_reaction()
+
     def check_death(self):
         if self.health <= 0:
             self.kill()
+
+    def hit_reaction(self):
+        if not self.vulnerable:
+            self.direction *= -self.resistance
 
     def update(self):
         self.move(self.speed)
