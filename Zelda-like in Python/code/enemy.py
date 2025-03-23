@@ -157,10 +157,12 @@ class Enemy(Entity):
 
             if attack_type == 'weapon':
                 self.health -= player.get_full_weapon_damage()
-                self.check_death()
 
             elif attack_type == 'magic':
-                pass
+                self.health -= player.get_full_magic_damage()
+
+            # Check death
+            self.check_death()
 
             self.hit_time = pygame.time.get_ticks()
             self.vulnerable = False

@@ -1,4 +1,5 @@
 import pygame
+from random import randint
 
 from settings import *
 
@@ -42,13 +43,12 @@ class MagicPlayer:
                 # horizontal
                 if direction.x:
                     offset_x = (direction.x * i) * TILESIZE
-                    x_pos = player.rect.centerx + offset_x
-                    y_pos = player.rect.centery
+                    x_pos = player.rect.centerx + offset_x + randint(-TILESIZE // 3, TILESIZE // 3)
+                    y_pos = player.rect.centery + randint(-TILESIZE // 3, TILESIZE // 3)
                     self.animation_player.create_particles('flame', (x_pos, y_pos), groups)
                 # vertical
                 else:
                     offset_y = (direction.y * i) * TILESIZE
-                    x_pos = player.rect.centerx
-                    y_pos = player.rect.centery + offset_y
+                    x_pos = player.rect.centerx + randint(-TILESIZE // 3, TILESIZE // 3)
+                    y_pos = player.rect.centery + offset_y + randint(-TILESIZE // 3, TILESIZE // 3)
                     self.animation_player.create_particles('flame', (x_pos, y_pos), groups)
-                pass
