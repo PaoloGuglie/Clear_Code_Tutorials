@@ -1,5 +1,5 @@
 import pygame
-from random import choice
+from random import choice, randint
 
 from settings import *
 from tile import Tile
@@ -115,7 +115,8 @@ class Level:
                                     (x_pos, y_pos),
                                     [self.visible_sprites, self.attackable_sprites],
                                     self.obstacle_sprites,
-                                    self.damage_player)
+                                    self.damage_player,
+                                    self.trigger_death_particles)
 
     def create_attack(self):
         """ Weapon has to be available inside the level.py file to be able
@@ -143,8 +144,9 @@ class Level:
                     for target_sprite in collision_sprites:
                         # grass collision
                         if target_sprite.sprite_type == 'grass':
-                            pos = target_sprite.rect.center
-                            self.animation_player.create_grass_particles(pos, [self.visible_sprites])
+                            pos = target_sprite.rect.center - pygame.math.Vector2(0, 50)
+                            for leaf in range(randint(3, 6)):
+                                self.animation_player.create_grass_particles(pos, [self.visible_sprites])
                             target_sprite.kill()
                         # enemy collision
                         elif target_sprite.sprite_type == 'enemy':
@@ -156,6 +158,13 @@ class Level:
             self.player.vulnerable = False
             self.player.hurt_time = pygame.time.get_ticks()
             # spawn particles
+            self.animation_player.create_particles(
+                attack_type,
+                self.player.rect.center,
+                [self.visible_sprites])
+
+    def trigger_death_particles(self, pos, particle_type):
+        self.animation_player.create_particles(particle_type, pos, self.visible_sprites)
 
     def run(self):
         # Update and draw the game
@@ -164,7 +173,6 @@ class Level:
         self.visible_sprites.enemy_update(self.player)
         self.player_attack_logic()
         self.ui.display(self.player)
-
 
 
 class YSortCameraGroup(pygame.sprite.Group):
