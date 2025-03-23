@@ -8,6 +8,7 @@ from enemy import Enemy
 from weapon import Weapon
 from ui import UI
 from particles import AnimationPlayer
+from magic import MagicPlayer
 from support import *
 
 from debug import debug
@@ -37,6 +38,7 @@ class Level:
 
         # Particles
         self.animation_player = AnimationPlayer()
+        self.magic_player = MagicPlayer(self.animation_player)
 
     def create_map(self):  # DEPRECATED FUNCTION
         # Items positions
@@ -126,7 +128,12 @@ class Level:
             [self.visible_sprites, self.attack_sprites])
 
     def create_magic(self, style, strength, cost):
-        print(style, strength, cost)
+
+        if style == 'heal':
+            self.magic_player.heal(self.player, strength, cost, [self.visible_sprites])
+
+        elif style == 'flame':
+            pass
 
     def destroy_attack(self):
         if self.current_attack:
