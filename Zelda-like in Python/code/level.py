@@ -7,8 +7,10 @@ from player import Player
 from enemy import Enemy
 from weapon import Weapon
 from ui import UI
-from debug import debug
+from particles import AnimationPlayer
 from support import *
+
+from debug import debug
 
 
 class Level:
@@ -32,6 +34,9 @@ class Level:
 
         # User interface
         self.ui = UI()
+
+        # Particles
+        self.animation_player = AnimationPlayer()
 
     def create_map(self):  # DEPRECATED FUNCTION
         # Items positions
@@ -136,8 +141,12 @@ class Level:
                 # operate on collided objects
                 if collision_sprites:
                     for target_sprite in collision_sprites:
+                        # grass collision
                         if target_sprite.sprite_type == 'grass':
+                            pos = target_sprite.rect.center
+                            self.animation_player.create_grass_particles(pos, [self.visible_sprites])
                             target_sprite.kill()
+                        # enemy collision
                         elif target_sprite.sprite_type == 'enemy':
                             target_sprite.get_damage(self.player, attack_sprite.sprite_type)
 
