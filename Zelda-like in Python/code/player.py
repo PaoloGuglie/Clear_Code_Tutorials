@@ -192,7 +192,7 @@ class Player(Entity):
 
         # Player hit timer
         if not self.vulnerable:
-            if current_time - self.hurt_time <= self.invulnerability_duration:
+            if current_time - self.hurt_time >= self.invulnerability_duration:
                 self.vulnerable = True
 
     def animate(self):
@@ -207,7 +207,13 @@ class Player(Entity):
         self.rect = self.image.get_rect(center=self.hitbox.center)
 
         # Flickering
-
+        if not self.vulnerable:
+            # flicker
+            alpha = self.wave_value()
+            self.image.set_alpha(alpha)
+        else:
+            # full visibility
+            self.image.set_alpha(255)
 
     def get_full_weapon_damage(self):
         base_damage = self.stats['attack']

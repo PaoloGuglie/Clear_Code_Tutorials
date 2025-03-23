@@ -126,11 +126,11 @@ class Enemy(Entity):
 
         # Flickering
         if not self.vulnerable:
-            # flickering
+            # flicker
             alpha = self.wave_value()
             self.image.set_alpha(alpha)
         else:
-            # Full visibility
+            # full visibility
             self.image.set_alpha(255)
 
     def cooldowns(self):
