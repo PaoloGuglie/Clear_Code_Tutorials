@@ -12,7 +12,6 @@ class UpgradeMenu:
         self.attribute_number = len(player.stats)
         self.attribute_names = list(player.stats.keys())
         self.max_values = list(player.max_stats.values())
-        self.font = pygame.font.Font(UI_FONT, UI_FONT_SIZE)
 
         # Items creation
         self.height = self.display_surface.get_height() * 0.8
@@ -72,7 +71,7 @@ class UpgradeMenu:
             top = self.display_surface.get_height() * 0.1
 
             # Create the object
-            item = Item(left, top, self.width, self.height, i, self.font)
+            item = Item(left, top, self.width, self.height, i)
             self.item_list.append(item)
 
     def display(self):
@@ -97,19 +96,28 @@ class UpgradeMenu:
 
 
 class Item:
-    def __init__(self, left, top, width, height, index, font):
+    def __init__(self, left, top, width, height, index):
         self.rect = pygame.Rect(left, top, width, height)
         self.index = index
-        self.font = font
 
     def display_names(self, surface, name, cost, selected):
 
+        if not selected:
+            # Settings
+            color = TEXT_COLOR
+            font = pygame.font.Font(UI_FONT, UI_FONT_SIZE)
+
+        else:
+            # Settings
+            color = TEXT_COLOR_SELECTED
+            font = pygame.font.Font(UI_FONT, UI_FONT_SIZE + 5)
+
         # Title text
-        title_surface = self.font.render(name, False, TEXT_COLOR)
+        title_surface = font.render(name, False, color)
         title_rect = title_surface.get_rect(midtop=self.rect.midtop + pygame.math.Vector2(0, 20))
 
         # Cost text
-        cost_surface = self.font.render(f'{int(cost)}', False, TEXT_COLOR)
+        cost_surface = font.render(f'{int(cost)}', False, color)
         cost_rect = cost_surface.get_rect(midbottom=self.rect.midbottom - pygame.math.Vector2(0, 20))
 
         # Draw
@@ -117,6 +125,7 @@ class Item:
         surface.blit(cost_surface, cost_rect)
 
     def display(self, surface, selection_num, name, value, max_value, cost):
-        pygame.draw.rect(surface, UI_BG_COLOR, self.rect)
 
-        self.display_names(surface, name, cost, False)
+        # Draw windows
+        pygame.draw.rect(surface, UI_BG_COLOR, self.rect)
+        self.display_names(surface, name, cost, self.index == selection_num)
