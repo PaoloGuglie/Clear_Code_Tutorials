@@ -11,6 +11,7 @@ from ui import UI
 from particles import AnimationPlayer
 from magic import MagicPlayer
 from support import *
+from upgrade_menu import UpgradeMenu
 
 from debug import debug
 
@@ -21,6 +22,7 @@ class Level:
         # get the display surface
         self.player = None
         self.display_surface = pygame.display.get_surface()
+        self.game_paused = False
 
         # sprite groups setup
         self.visible_sprites = YSortCameraGroup()
@@ -36,6 +38,7 @@ class Level:
 
         # User interface
         self.ui = UI()
+        self.upgrade_menu = UpgradeMenu(self.player)
 
         # Particles
         self.animation_player = AnimationPlayer()
@@ -189,13 +192,28 @@ class Level:
     def add_exp(self, amount):
         self.player.exp += amount
 
+    def toggle_menu(self):
+        """ Create game menu """
+
+        self.game_paused = not self.game_paused
+
     def run(self):
-        # Update and draw the game
-        self.visible_sprites.update()
+        """ I always draw the elements on screen, but, if the game
+        is paused, I don't want to update the elements """
+
+        # Draw the game
         self.visible_sprites.custom_draw(self.player)
-        self.visible_sprites.enemy_update(self.player)
-        self.player_attack_logic()
         self.ui.display(self.player)
+
+        if self.game_paused:
+            # Upgrade menu
+            self.upgrade_menu.display()
+
+        else:
+            # Update the game
+            self.visible_sprites.update()
+            self.visible_sprites.enemy_update(self.player)
+            self.player_attack_logic()
 
 
 class YSortCameraGroup(pygame.sprite.Group):

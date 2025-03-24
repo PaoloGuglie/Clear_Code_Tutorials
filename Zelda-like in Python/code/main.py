@@ -26,6 +26,9 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     quit_game()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_m:  # menu button
+                        self.level.toggle_menu()
 
             # Background
             self.screen.fill('Black')
