@@ -110,7 +110,7 @@ class Item:
         else:
             # Settings
             color = TEXT_COLOR_SELECTED
-            font = pygame.font.Font(UI_FONT, UI_FONT_SIZE + 5)
+            font = pygame.font.Font(UI_FONT, UI_FONT_SIZE + 12)
 
         # Title text
         title_surface = font.render(name, False, color)
@@ -124,8 +124,35 @@ class Item:
         surface.blit(title_surface, title_rect)
         surface.blit(cost_surface, cost_rect)
 
+    def display_bar(self, surface, value, max_value, selected):
+
+        # Setup
+        top = self.rect.midtop + pygame.math.Vector2(0, 80)
+        bottom = self.rect.midbottom - pygame.math.Vector2(0, 80)
+        color = BAR_COLOR_SELECTED if selected else BAR_COLOR
+
+        # Bar setup
+        full_height = bottom[1] - top[1]
+        relative_number = (value / max_value) * full_height
+        value_rect = pygame.Rect(top[0] - 15, bottom[1] - relative_number, 30, 10)
+
+        red_line_top = pygame.math.Vector2(top.x, bottom.y - relative_number)
+
+        # Draw elements
+        pygame.draw.line(surface, color, top, bottom, 10)
+        pygame.draw.line(surface, 'red', red_line_top, bottom, 10)
+        pygame.draw.rect(surface, color, value_rect)
+
     def display(self, surface, selection_num, name, value, max_value, cost):
 
         # Draw windows
-        pygame.draw.rect(surface, UI_BG_COLOR, self.rect)
+        if self.index == selection_num:
+            pygame.draw.rect(surface, UPGRADE_BG_COLOR_SELECTED, self.rect.inflate(30, 30))
+            pygame.draw.rect(surface, UI_BORDER_COLOR, self.rect.inflate(30, 30), 6)
+        else:
+            pygame.draw.rect(surface, UI_BG_COLOR, self.rect)
+            pygame.draw.rect(surface, UI_BORDER_COLOR, self.rect, 4)
+
+        # Draw items on windows
         self.display_names(surface, name, cost, self.index == selection_num)
+        self.display_bar(surface, value, max_value, self.index == selection_num)
