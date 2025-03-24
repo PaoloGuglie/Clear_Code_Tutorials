@@ -1,4 +1,5 @@
 import pygame
+import sys
 from random import choice, randint
 
 from settings import *
@@ -118,7 +119,8 @@ class Level:
                                     [self.visible_sprites, self.attackable_sprites],
                                     self.obstacle_sprites,
                                     self.damage_player,
-                                    self.trigger_death_particles)
+                                    self.trigger_death_particles,
+                                    self.add_exp)
 
     def create_attack(self):
         """ Weapon has to be available inside the level.py file to be able
@@ -162,6 +164,12 @@ class Level:
                         elif target_sprite.sprite_type == 'enemy':
                             target_sprite.get_damage(self.player, attack_sprite.sprite_type)
 
+    def check_player_death(self):
+        """ Quit the game if the player's health reaches 0 """
+
+        if self.player.health <= 0:
+            quit_game()
+
     def damage_player(self, amount, attack_type):
         if self.player.vulnerable:
             self.player.health -= amount
@@ -172,9 +180,14 @@ class Level:
                 attack_type,
                 self.player.rect.center,
                 [self.visible_sprites])
+            # check player death
+            self.check_player_death()
 
     def trigger_death_particles(self, pos, particle_type):
         self.animation_player.create_particles(particle_type, pos, self.visible_sprites)
+
+    def add_exp(self, amount):
+        self.player.exp += amount
 
     def run(self):
         # Update and draw the game
@@ -222,3 +235,8 @@ class YSortCameraGroup(pygame.sprite.Group):
 
         for enemy in enemy_sprites:
             enemy.enemy_update(player)
+
+
+def quit_game():
+    pygame.quit()
+    sys.exit()
