@@ -46,7 +46,7 @@ class UpgradeMenu:
             if keys[pygame.K_SPACE]:
                 self.can_move = False
                 self.selection_time = pygame.time.get_ticks()
-                print(self.selection_index)
+                self.item_list[self.selection_index].trigger(self.player)
 
     def cooldowns(self):
         """ Timers for menu """
@@ -142,6 +142,26 @@ class Item:
         pygame.draw.line(surface, color, top, bottom, 10)
         pygame.draw.line(surface, 'red', red_line_top, bottom, 10)
         pygame.draw.rect(surface, color, value_rect)
+
+    def trigger(self, player):
+        """ Upgrade stats """
+
+        # Data
+        upgrade_attribute = list(player.stats.keys())[self.index]
+
+        # Upgrade
+        if (player.exp >= player.upgrade_cost[upgrade_attribute] and
+            player.stats[upgrade_attribute] < player.max_stats[upgrade_attribute]):
+            # reduce exps
+            player.exp -= player.upgrade_cost[upgrade_attribute]
+            # increase stat
+            player.stats[upgrade_attribute] *= 1.2
+            # increase upgrade cost
+            player.upgrade_cost[upgrade_attribute] *= 1.4
+
+        # Block from exceeding max stat
+        if player.stats[upgrade_attribute] > player.max_stats[upgrade_attribute]:
+            player.stats[upgrade_attribute] = player.max_stats[upgrade_attribute]
 
     def display(self, surface, selection_num, name, value, max_value, cost):
 
