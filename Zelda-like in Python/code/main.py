@@ -31,12 +31,12 @@ class Game:
                         self.level.toggle_menu()
 
             # Background
-            self.screen.fill('Black')
+            self.screen.fill(WATER_COLOR)
 
             # Run the level
             self.level.run()
 
-            # Refresh game
+            # Refresh the game
             pygame.display.update()
             self.clock.tick(FPS)
 
