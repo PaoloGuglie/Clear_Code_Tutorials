@@ -12,6 +12,7 @@ def quit_game():
 
 class Game:
     def __init__(self):
+
         # Setup
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -19,6 +20,11 @@ class Game:
         self.clock = pygame.time.Clock()
 
         self.level = Level()
+
+        # Sound
+        main_sound = pygame.mixer.Sound('../audio/main.ogg')
+        main_sound.set_volume(0.4)
+        main_sound.play(loops=-1)
 
     def run(self):
         while True:

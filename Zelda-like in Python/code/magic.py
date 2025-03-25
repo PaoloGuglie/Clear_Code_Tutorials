@@ -7,6 +7,12 @@ from settings import *
 class MagicPlayer:
     def __init__(self, animation_player):
         self.animation_player = animation_player
+        self.sounds = {
+            'heal': pygame.mixer.Sound('../audio/heal.wav'),
+            'flame': pygame.mixer.Sound('../audio/Fire.wav')
+        }
+        self.sounds['heal'].set_volume(0.5)
+        self.sounds['flame'].set_volume(0.2)
 
     def heal(self, player, strength, cost, groups):
 
@@ -14,6 +20,7 @@ class MagicPlayer:
         if player.energy >= cost:
             player.health += strength
             player.energy -= cost
+            self.sounds['heal'].play()
             # avoid going over 100% health
             if player.health >= player.stats['health']:
                 player.health = player.stats['health']
@@ -27,6 +34,8 @@ class MagicPlayer:
         # Check for energy level
         if player.energy >= cost:
             player.energy -= cost
+
+            self.sounds['flame'].play()
 
             # Get the flames direction
             if player.status.split('_')[0] == 'right':
