@@ -46,16 +46,16 @@ def func():
 
     Nesting structure:
 
-    transform():
-    -----------
-        duration()
-        -------------
+    transform() begins:
+    ----------------------
+        duration() begins
+        -------------------------
             func()
-            ---------------
-        duration()
-        -------------
-    transform()
-    -----------"""
+            ----------------------------
+        duration() ends
+        -----------------------
+    transform() ends
+    --------------------- """
 
     print("func()")
     sleep(1)
