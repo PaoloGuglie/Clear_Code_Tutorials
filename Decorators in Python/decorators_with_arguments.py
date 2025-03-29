@@ -25,7 +25,7 @@ try:
     func('hello')
 
 except TypeError:
-    print("Error")
+    print("Error!")
 
 # I will now get an error because the function func() needs a parameter, but
 # in the decorator func() is called without arguments.
