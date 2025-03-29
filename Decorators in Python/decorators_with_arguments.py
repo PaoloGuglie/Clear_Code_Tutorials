@@ -4,7 +4,11 @@
 # a function inside a function inside another function.
 
 def decorator(func):
+
     def wrapper():
+        """ In calling wrapper(), the function's argument
+        is "forgotten" """
+
         print("Decorator begins.")
         func()
         print("Decorator ends.")
