@@ -33,7 +33,7 @@ class Fish:
         self.speed = speed
         self.has_scales = has_scales
 
-        # to reference any other class following the MRO
+        # to reference any other class, following the MRO
         super().__init__(**kwargs)
 
     def swim(self):
@@ -74,6 +74,7 @@ class Shark(Monster, Fish):
     def __init__(self, bite_strength, health, energy, speed, has_scales):
         self.bite_strength = bite_strength
 
+        # use keyword arguments to use **kwargs later
         super().__init__(
             health=health,
             energy=energy,

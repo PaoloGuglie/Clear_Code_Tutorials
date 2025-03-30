@@ -1,12 +1,12 @@
 # @property allows me to turn methods into attributes. This comes from the
-# property function.
+# property() function.
 
 class Generic:
     def __init__(self):
         self.x = 10
 
     def get_x(self):
-        """ To run other code while retrieving an attribute.
+        """ Method to run other code while retrieving an attribute.
         Not elegant. """
 
         print('get x')

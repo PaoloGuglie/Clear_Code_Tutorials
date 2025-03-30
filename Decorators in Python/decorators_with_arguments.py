@@ -1,7 +1,7 @@
 # I can have functions with parameters being decorators.
 
-# Decorators can also have parameters. Complicated because I would be wrapping
-# a function inside a function inside another function.
+# Decorators can also have parameters. It is complicated because I would
+# be wrapping a function inside a function inside another function.
 
 def decorator(func):
 

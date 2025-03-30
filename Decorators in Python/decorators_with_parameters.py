@@ -1,8 +1,8 @@
 def repetition_decorator(repetitions):
-    """ 1) I call the repetition decorator and pass 4.
+    """ 1) I call the repetition decorator and pass 5.
     2) This creates a new decorator() function and return it.
     All I get from repetition_decorator() is decorator().
-    decorator() replaces all of repetition_decorator(4).
+    decorator() replaces all of repetition_decorator(5).
     3) On this new decorator I am calling the new function,
     meaning now I am passing func() into the decorator()
     as parameter.
@@ -27,6 +27,6 @@ def func():
 
 
 # ... is the same as this:
-func = repetition_decorator(4)(func)   # becomes func = decorator(func)
+func = repetition_decorator(5)(func)   # becomes func = decorator(func)
 
 func()
