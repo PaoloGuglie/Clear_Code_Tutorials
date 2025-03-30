@@ -52,8 +52,8 @@ class Shark(Monster, Fish):
     call it from the Monster class. I can use a super() in the
     __init__() method of the Monster class. It follows the
     inheritance (MRO) set by the Shark class. If I call the Monster class
-    from the Shark class, it knows to look at the fish next in line.
-    If I call the monster by itself, the super() does nothing.
+    from the Shark class, it knows to look at the Fish class next in line.
+    If I call the Monster class by itself, the super() does nothing.
 
     I add another super(), this time in the Fish class's __init__()
     method, in case there is going to be another item in the list of

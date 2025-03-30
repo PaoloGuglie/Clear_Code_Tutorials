@@ -13,7 +13,7 @@
 
 # Whenever I call a method, Python automatically passes a reference to the class as
 # the first argument into the method. I have to capture it with a PARAMETER. This
-# means that a method needs at least one parameter, as a referente to the class
+# means that a method needs at least one parameter, as a reference to the class
 # itself. Usually "self" is used, but I can also use other words.
 # I can add as many parameters as I want.
 
