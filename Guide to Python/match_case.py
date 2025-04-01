@@ -19,3 +19,18 @@ match mood:
     case _:
         """ like "default" in C switch statement """
         print("any other mood...")
+
+print("-------------")
+
+
+# Without linebreaks:
+
+match mood:
+
+    case 'thirsty': print("get some water!")
+
+    case 'hungry': print("get some food!")
+
+    case 'tired': print("get some sleep!")
+
+    case _: print("any other mood...")
