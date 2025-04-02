@@ -25,6 +25,8 @@ inventory_numbers = [43, 12, 95, 421, 23]
 selected_items = [(name, number) for name, number in
                   zip(inventory_names, inventory_numbers) if number < 25]
 
+# more flexible than simple list(zip(...)) . I can add if-else statements.
+
 print(selected_items)
 
 print("\n------------------------------\n")
