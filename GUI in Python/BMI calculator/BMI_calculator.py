@@ -1,11 +1,6 @@
 import customtkinter as ctk
 from settings import *
 
-try:
-    from ctypes import windll, byref, sizeof, c_int
-except Exception as e:
-    print(e)
-
 
 class App(ctk.CTk):
     def __init__(self):
