@@ -15,6 +15,7 @@ class App(ctk.CTk):
         self.rowconfigure((0, 1, 2, 3), weight=1, uniform='a')
 
         # Data
+        self.metric_bool = ctk.BooleanVar(value=True)
         self.height_int = ctk.IntVar(value=170)
         self.weight_float = ctk.DoubleVar(value=65)
         self.bmi_string = ctk.StringVar()
@@ -23,18 +24,25 @@ class App(ctk.CTk):
         # Tracing
         self.height_int.trace('w', self.update_bmi)
         self.weight_float.trace('w', self.update_bmi)
+        self.metric_bool.trace('w', self.change_units)
 
         # Widgets ("parent" is self)
         ResultText(self, self.bmi_string)
-        WeightInput(self, self.weight_float)
-        HeightInput(self, self.height_int)
-        UnitSwitcher(self)
+        self.weight_input = WeightInput(self, self.weight_float, self.metric_bool)
+        self.height_input = HeightInput(self, self.height_int, self.metric_bool)
+        UnitSwitcher(self, self.metric_bool)
 
     def update_bmi(self, *args):
         height_meter = self.height_int.get() / 100
         weight_kg = self.weight_float.get()
         bmi_result = round(weight_kg / height_meter ** 2, 2)
         self.bmi_string.set(str(bmi_result))
+
+    def change_units(self, *args):
+        """ Update the units texts """
+
+        self.height_input.update_height(self.height_int.get())
+        self.weight_input.update_weight()
 
 
 class ResultText(ctk.CTkLabel):
@@ -53,9 +61,11 @@ class ResultText(ctk.CTkLabel):
 
 
 class WeightInput(ctk.CTkFrame):
-    def __init__(self, parent, weight_float):
+    def __init__(self, parent, weight_float, metric_bool):
         super().__init__(master=parent, fg_color=WHITE)
         self.grid(column=0, row=2, sticky='nsew', padx=10, pady=10)
+
+        self.metric_bool = metric_bool
 
         self.weight_float = weight_float
         self.weight_var = ctk.StringVar(value=f'{self.weight_float.get()} Kg')
@@ -118,19 +128,37 @@ class WeightInput(ctk.CTkFrame):
         small_plus_button.grid(row=0, column=3, padx=4, pady=4)
 
     def update_weight(self, info=None) -> None:
-        amount = 1 if info[1] == 'large' else 0.1
-        if info[0] == 'plus':
-            self.weight_float.set(self.weight_float.get() + amount)
-        else:
-            self.weight_float.set(self.weight_float.get() - amount)
 
-        self.weight_var.set(value=f'{self.weight_float.get():.1f} Kg')
+        if info:
+
+            if self.metric_bool.get():
+                # metric units
+                amount = 1 if info[1] == 'large' else 0.1
+            else:
+                # imperial units
+                amount = 0.4536 if info[1] == 'large' else (0.4536 / 16)
+
+            if info[0] == 'plus':
+                self.weight_float.set(self.weight_float.get() + amount)
+            else:
+                self.weight_float.set(self.weight_float.get() - amount)
+
+        if self.metric_bool.get():
+            # metric string
+            self.weight_var.set(value=f'{self.weight_float.get():.1f} Kg')
+        else:
+            # imperial string
+            raw_ounces = self.weight_float.get() * 2.2046 * 16
+            pounds, ounces = divmod(raw_ounces, 16)
+            self.weight_var.set(value=f'{int(pounds)} lb {int(ounces)} oz')
 
 
 class HeightInput(ctk.CTkFrame):
-    def __init__(self, parent, height_int):
+    def __init__(self, parent, height_int, metric_bool):
         super().__init__(master=parent, fg_color=WHITE)
         self.grid(row=3, column=0, sticky='nsew', padx=10, pady=10)
+
+        self.metric_bool = metric_bool
 
         self.height_int = height_int
         self.height_str = ctk.StringVar(value=f'{self.height_int.get()} m')
@@ -154,15 +182,44 @@ class HeightInput(ctk.CTkFrame):
         output_text.pack(side='left', fill='x', expand=True, padx=10, pady=10)
 
     def update_height(self, amount):
+
+        # Set the new height
         self.height_int.set(value=int(amount))
-        self.height_str.set(value=f'{self.height_int.get()} m')
+
+        # Update the string based on units
+        if self.metric_bool.get():
+            # metric units
+            self.height_str.set(value=f'{self.height_int.get()} m')
+        else:
+            # imperial units
+            feet, inches = divmod(amount / 2.54, 12)
+            self.height_int.set(value=int(amount))
+            self.height_str.set(value=f'{int(feet)} \'{int(inches)}\" m')
 
 
 class UnitSwitcher(ctk.CTkLabel):
-    def __init__(self, parent):
+    def __init__(self, parent, metric_bool):
+        self.metric_bool = metric_bool
+
+        # Text
         font = ctk.CTkFont(family=FONT, size=SWITCH_FONT_SIZE, weight='bold')
-        super().__init__(master=parent, text='METRIC', font=font)
+        super().__init__(master=parent,
+                         text='METRIC',
+                         font=font)
         self.place(relx=0.98, rely=0.01, anchor='ne')
+
+        self.bind('<Button>', self.change_units)
+
+    def change_units(self, event):
+
+        # Change the metric bool
+        self.metric_bool.set(value=not self.metric_bool.get())
+
+        # Update the text
+        if self.metric_bool.get():
+            self.configure(text='METRIC')
+        else:
+            self.configure(text='IMPERIAL')
 
 
 def main() -> None:
