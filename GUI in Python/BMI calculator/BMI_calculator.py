@@ -137,6 +137,7 @@ class HeightInput(ctk.CTkFrame):
 
         # Widgets
         slider = ctk.CTkSlider(master=self,
+                               command=self.update_height,
                                button_color=GREEN,
                                button_hover_color=GRAY,
                                progress_color=GREEN,
@@ -152,8 +153,9 @@ class HeightInput(ctk.CTkFrame):
                                    font=font)
         output_text.pack(side='left', fill='x', expand=True, padx=10, pady=10)
 
-    def update_height(self):
-        pass
+    def update_height(self, amount):
+        self.height_int.set(value=int(amount))
+        self.height_str.set(value=f'{self.height_int.get()} m')
 
 
 class UnitSwitcher(ctk.CTkLabel):
